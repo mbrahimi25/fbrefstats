@@ -1,10 +1,10 @@
-# FBScrape
+# FBScraper
 ### A python script to scrape football data from [FBRef]
 
 ![Static Badge](https://img.shields.io/badge/License-GNU-red) ![Static Badge](https://img.shields.io/badge/Python-yellow)
 
 ### About
-FBScrape is a Python script which uses *BeautifulSoup* and *requests* to scrape data from [FBRef].
+FBScraper is a Python script which uses *BeautifulSoup* and *requests* to scrape data from [FBRef].
 This is a small side project I work on in my free time. As an avid soccer fan and someone who finds sports stats interesting, I tried making a program which takes player stats into account so I could gain an advantage on my fantasy leagues with my friends. However, I could not find many good free libraries which provided soccer data, so I resolved to build one myself.
 
 
@@ -20,7 +20,7 @@ As seen above, there are two classes within the ```fbscraper``` script:
 - ```Scraper```
 - ```StatStrings```
 
-The ```Scraper``` class contains the actual scraping code. ```StatStrings``` is a class full of variables holding strings, and are used when calling the method ```Scraper.getLeagueLeaders()```.
+The ```Scraper``` class contains the actual scraping code. ```StatStrings``` is a class full of variables holding strings, which are used when calling the method ```Scraper.getLeagueLeaders()```.
 
 **Check out the [documentation](DOCUMENTATION.md) for info on how to use the script.**
 
