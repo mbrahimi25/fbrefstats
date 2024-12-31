@@ -7,3 +7,5 @@ TODO:
 - Research how to turn the script into an easily downloadable library
 - Add functions to scrape more data
 - Research the possibility of making some functions (such as returning a player link) static, so they are independant of an object which is usually tied to a specific league
+
+Check out the [documentation](DOCUMENTATION.md)
