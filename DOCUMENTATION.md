@@ -26,14 +26,14 @@ Below is the documentation for every method currently found in the script.
     <h4><code>Scraper.getLeagueLeaders(self, stat_id)</code></h4>
 </summary>
 
-***Returns a list containing league leader(s) in the category specified by*** **```stat_id```, as well as the value of the statistic.**
-This method is the only method which makes use of the variables present in the ```StatStrings``` class.
-The ```stat_id``` argument determines the category whose leaders the method will return.
+***Returns a list containing league leader(s) in the category specified by*** **```stat_id```, as well as the value of the statistic.**\
+This method is the only method which makes use of the variables present in the ```StatStrings``` class.\
+The ```stat_id``` argument determines the category whose leaders the method will return.\
 The method returns a list. The first values of the list are string(s) with the leader(s) within the ```stat_id``` category. The last value of the list is the value of the statistic.
 The available variables for ```stat_id``` can be seen in the ```StatString``` class. They are:
 | Category | Variable name | String represented |
 |----------|---------------|----------------------|
-| Sub appearances | sub_appearances | "leaders_games_subs" |
+| Substitute appearances | sub_appearances | "leaders_games_subs" |
 | PPG (Points per game) | points_per_game | "leaders_points_per_game" |
 | Plus-minus | plus_minus | "leaders_plus_minus" |
 | Plus-minus per-90 | plus_minus_per_90 | "leaders_plus_minus_per90" |
@@ -73,7 +73,7 @@ print(scraper.getLeagueLeaders(StatStrings.own_goals))
     <h4><code>Scraper.getTeams(self)</code></h4>
 </summary>
 
-***Returns a list containing strings of all the names of the teams in the league, in alphabetical order.***
+***Returns a list containing strings of all the names of the teams in the league, in alphabetical order.***\
 A straightforward method. Returns a list containing every team present in the league represented by the ```league``` argument of  ```Scraper```.
 
 **Example**
@@ -95,7 +95,7 @@ print(scraper.getTeams())
     <h4><code>Scraper.getLeagueTable(self)</code></h4>
 </summary>
 
-***Returns a pandas dataframe of the league table.***
+***Returns a pandas dataframe of the league table.***\
 Reads the current league table of the league represented by the ```league``` argument of ```Scraper```.
 
 **Example**
@@ -136,8 +136,8 @@ print(scraper.getLeagueTable().to_string())
     <h4><code>Scraper.getSquadStats(self)</code></h4>
 </summary>
 
-***Returns a pandas dataframe of the squad stats.***
-Straightforward. Returns the squad stats table in the form of a pandas dataframe.
+***Returns a pandas dataframe of the squad stats.***\
+Straightforward. Returns the squad stats table of the league specified in the ```league``` argument of the ```Scraper``` object in the form of a pandas dataframe.
 
 **Example**
 ```sh
@@ -181,8 +181,7 @@ print(scraper.getSquadStats().to_string())
     <h4><code>Scraper.getPlayerLink(self, inputted_player_name)</code></h4>
 </summary>
 
-***Returns a list with the stats page for the player inputted. If more than one player has that name, it will return all their links in a list.***
-
+***Returns a list with the stats page for the player inputted. If more than one player has that name, it will return all their links in a list.***\
 This method searches the string provided in the ```inputted_player_name``` argument on the FBRef database, and returns a list with the URLs found after the search.
 
 **Example 1**
