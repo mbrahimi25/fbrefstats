@@ -30,7 +30,7 @@ As of right now, this script is still in a very early development phase, and I a
 
 - **Update ```README.md``` (Urgent)** ☑
 - **Add a documentation file** ☑
-- **Update the documentation file** ☐
+- **Update [the documentation file](DOCUMENTATION.md)** ☑
 
 - **Turn *FBScraper* into a library** ☐\
 I have never made an actual library before, so I would like to research how to turn this into a real installable Python library.
