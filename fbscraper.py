@@ -215,15 +215,13 @@ class Scraper:
     """
 
     squad_stats = self.soup.findAll('table')[2]
-    table = pd.read_html(str(squad_stats))[0]
+    table = pd.read_html(StringIO(str(squad_stats)))[0]
     return table
 
   def getPlayerLink(self, inputted_player_name):
     """
-    Returns the stats page for the player inputted.
+    Returns a list with the stats page for the player inputted.
     If more than one player has that name, it will return all their links in a list.
-    The optional 'nationality' argument is to input a nation's 3 letter abbreviation so only players from that nation are returned by the function.
-    /// ADD FUNCTIONALITY FOR THIS ^^^^^
     """
     returned_players = []
     
