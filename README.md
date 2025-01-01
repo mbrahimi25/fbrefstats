@@ -1,5 +1,6 @@
 # FBScraper
 ### A python script to scrape football data from [FBRef]
+#### Check out the [documentation](DOCUMENTATION.md)
 
 ![Static Badge](https://img.shields.io/badge/License-GNU-red) ![Static Badge](https://img.shields.io/badge/Python-yellow)
 
