@@ -32,6 +32,9 @@ As of right now, this script is still in a very early development phase, and I a
 - **Add a documentation file** ☑
 - **Update [the documentation file](DOCUMENTATION.md)** ☑
 
+- **Different table formats** ☑\
+I've learnt that pandas dataframes already have built-in functions for this: ```pandas.DataFrame.to_csv()``` and ```pandas.DataFrame.to_string()```
+
 - **Turn *FBScraper* into a library** ☐\
 I have never made an actual library before, so I would like to research how to turn this into a real installable Python library.
 
@@ -41,8 +44,7 @@ There is so much data available on [FBRef], so I would love to add more methods 
 - **Add support for different league formats** ☐\
 As of right now, there are very few leagues supported (currently the English, French, German, Spanish, Italian, Dutch, and Portuguese top flights) as I am yet to add functionality to leagues with different formats (promotion/relegation playoffs, MLS post-season, or Apertura/Clausura formats commonly found in Latin America)
 
-- **Different table formats** ☐\
-As of now, methods which return tables (such as ```Scraper.getLeagueTable()```) return a *pandas* dataframe. While this is ok, I could also add support to return as a CSV file, or to print the table directly into the console
+
 
 - **Add nationality argument to ```Scraper.getPlayerLink()```** ☐\
 Currently, ```Scraper.getPlayerLink()``` takes one argument: ```inputted_player_name```. The method returns a list of URLs depending on which players were found when searching with ```inputted_player_name```. This can get annoying when there are many players with similar names, so adding a *nationality* argument would be useful for searching.
