@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from io import StringIO
 
 session = requests.session()
 
@@ -157,6 +158,9 @@ class Scraper:
 
 
   def getLeagueLeaders(self, stat_id):
+    """
+    Returns a list containing league leader(s) in the category specified by stat_id, as well as the value of the statistic
+    """
     if (stat_id == StatStrings.minutes): # Minute leaders
       playerRows = self.leaders_soup.find("div", id=stat_id).findAll("tr") # Returns all the rows
 
@@ -202,7 +206,7 @@ class Scraper:
     """
     
     league_table = self.soup.findAll('table')[0]
-    table = pd.read_html(str(league_table))[0]
+    table = pd.read_html(StringIO(str(league_table)))[0]
     return table
 
   def getSquadStats(self):
