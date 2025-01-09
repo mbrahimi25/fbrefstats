@@ -12,18 +12,27 @@ This is a small side project I work on in my free time. As an avid soccer fan an
 ### Installation
 As of now, the project is not available as a standalone library. To use this product currently, you can **download the script** and import it into any other Python scripts you wish to use using:
 ```sh
-from fbscraper import Scraper, StatStrings
+from fbscraper import LeagueScraper, GeneralScraper, StatStrings
 ```
 
 ### Usage
-As seen above, there are two classes within the ```fbscraper``` script:
+As seen above, there are three classes within the ```fbscraper``` script:
 (The names of these classes may change in the future, they are currently placeholders)
-- ```Scraper```
+- ```LeagueScraper```
+  - Contains scraping methods relating to leagues. An object is needed to access these methods, with each object representing a specific league.
+- ```GeneralScraper```
+  - Contains scraping methods that are *independant*. They are static and do not tie into any specific league.
 - ```StatStrings```
-
-The ```Scraper``` class contains the actual scraping code. ```StatStrings``` is a class full of variables holding strings, which are used when calling the method ```Scraper.getLeagueLeaders()```.
+  - Class full of variables holding strings, which are used when calling the method ```LeagueScraper.getLeagueLeaders()```
 
 **Check out the [documentation](DOCUMENTATION.md) for info on how to use the script.**
+
+### Other libraries used
+As of now, the libraries used within this project are:
+- ```BeautifulSoup4```
+- ```requests```
+- ```pandas```
+- ```StringIO```
 
 ### To-do
 As of right now, this script is still in a very early development phase, and I am only working on it as a personal side project. I have a few things I am thinking of adding:
@@ -31,6 +40,8 @@ As of right now, this script is still in a very early development phase, and I a
 - **Update ```README.md``` (Urgent)** ☑
 - **Add a documentation file** ☑
 - **Update [the documentation file](DOCUMENTATION.md)** ☑
+- **Static functions** ☑\
+Split the ```Scraper``` class into two classes: ```LeagueScraper``` and ```GeneralScraper```, which contains **static methods**
 
 - **Different table formats** ☑\
 I've learnt that pandas dataframes already have built-in functions for this: ```pandas.DataFrame.to_csv()``` and ```pandas.DataFrame.to_string()```
@@ -44,13 +55,8 @@ There is so much data available on [FBRef], so I would love to add more methods 
 - **Add support for different league formats** ☐\
 As of right now, there are very few leagues supported (currently the English, French, German, Spanish, Italian, Dutch, and Portuguese top flights) as I am yet to add functionality to leagues with different formats (promotion/relegation playoffs, MLS post-season, or Apertura/Clausura formats commonly found in Latin America)
 
-
-
 - **Add nationality argument to ```Scraper.getPlayerLink()```** ☐\
 Currently, ```Scraper.getPlayerLink()``` takes one argument: ```inputted_player_name```. The method returns a list of URLs depending on which players were found when searching with ```inputted_player_name```. This can get annoying when there are many players with similar names, so adding a *nationality* argument would be useful for searching.
-
-- **Static functions** ☐\
-Research making some methods static (like ```Scraper.getPlayerLink()```) as they do not tie in specifically to one league. It does not make sense to have a ```Scraper``` object which can be used to get English league stats, but have to call a method from that object to search for players anywhere around the world.
 
 ### License
 GNU GPL
