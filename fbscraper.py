@@ -84,9 +84,9 @@ class StatStrings:
   progressive_carries = "leaders_progressive_carries"
   carries_into_penalty_area = "leaders_carries_into_penalty_area"
   progressive_passes_recieved = "leaders_progressive_passes_recieved"
-  
+
   minutes = "leaders_minutes" ####### Special case as usually many players have equal minutes
-  
+
   sub_appearances = "leaders_games_subs"
   points_per_game = "leaders_points_per_game"
   plus_minus = "leaders_plus_minus"
@@ -107,9 +107,9 @@ class StatStrings:
   goals_against_per_90 = "leaders_gk_goals_against_per90"
   psxg_ga_comparision = "leaders_gk_psxg_net"
   psxg_ga_comparision_per_90 = "leaders_gk_psxg_net_per90"
-  
 
-class Scraper:
+
+class LeagueScraper:
   """
   A class for scraping data from different leagues on FBRef
   Instantiate a Scraper by passing the country name of the league you wish to scrape into the 'league' argument. Available leagues include:
@@ -121,7 +121,7 @@ class Scraper:
   * 'netherlands' (Eredivisie)
   * 'portugal' (Primeira Liga)
   """
-  
+
   def __init__(self, league):
     self.league = league
     match league:
@@ -142,7 +142,7 @@ class Scraper:
       case other:
         raise ValueError(f"Invalid league: {league}")
     # switch/case statement assigning the different league urls to the self.url variable in order to be read by BeautifulSoup
-    
+
     response = session.get(self.url, headers=headers)
     # gets the raw HTML from self.url
 
@@ -168,7 +168,7 @@ class Scraper:
       # Gets the minute value of the first row in the table
 
       leaders = [] # Creates the leaders list to return to the user
-      
+
       for i in playerRows: # Loops through all the rows
         if i.find("td", {"class": "value"}).text == " " + highestMinutes:
           leaders.append(i.find("td", {"class": "who"}).find("a").text)
@@ -177,7 +177,7 @@ class Scraper:
         # append the player name to the leaders list
 
       leaders.append(int(highestMinutes))
-      
+
     else: # Any stat other than minutes
       firstPlacePlayersRows = self.leaders_soup.find("div", id=stat_id).findAll("tr",{"class":"first_place"})
       # Scrapes the table rows with the class "first_place" (as there may be more than one)
@@ -189,7 +189,7 @@ class Scraper:
       # Appends the leaderValue to leaders[] so that it can be returned to the user
 
     return leaders
- 
+
   def getTeams(self):
     """
     Returns a list containing strings of all the names of the teams in the league, in alphabetical order
@@ -204,7 +204,7 @@ class Scraper:
     """
     Returns a pandas dataframe of the league table
     """
-    
+
     league_table = self.soup.findAll('table')[0]
     table = pd.read_html(StringIO(str(league_table)))[0]
     return table
@@ -218,20 +218,27 @@ class Scraper:
     table = pd.read_html(StringIO(str(squad_stats)))[0]
     return table
 
-  def getPlayerLink(self, inputted_player_name):
+
+class GeneralScraper:
+  """
+  A GENERAL Scraper, not tied to any specific league. All methods in this class are static.
+  """
+
+  @staticmethod
+  def getPlayerLink(inputted_player_name):
     """
     Returns a list with the stats page for the player inputted.
     If more than one player has that name, it will return all their links in a list.
     """
     returned_players = []
-    
+
     player_name_list = inputted_player_name.split(" ")
 
     searchbar_link = "https://fbref.com/en/search/search.fcgi?search="
     for i in player_name_list:
         searchbar_link += i + "+"
     # This is the search URL that will be scraped to find the player page
-    
+
     search_html = session.get(searchbar_link, headers=headers)
     search_soup = BeautifulSoup(search_html.text, "html.parser")
     # returns HTML of the search bar page
@@ -246,7 +253,7 @@ class Scraper:
       player_link = "https://fbref.com" + search_soup.find('div', {'id': 'bottom_nav_container'}).find('a')['href']
       # Finds a div (id: bottom_nav_container) and finds the first link inside it, which contains a link back to the same page we're on (for some reason). We can use this to find the URL of our player and return it in our function
       returned_players.append(player_link)
-    
+
     elif (search_h3 == 'Players from Leagues Covered by FBref.'):
       # If the search returns more than one player
       player_divs = search_soup.findAll('div', {'class': 'search-item-name'})
@@ -256,5 +263,5 @@ class Scraper:
 
     else:
       print("Input unable to be processed")
-    
+
     return returned_players
