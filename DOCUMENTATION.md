@@ -3,18 +3,20 @@
 ### Setup
 
 **As mentioned in the [README](README.md) file:**
-As of now, the project is not available as a standalone library. To use this product currently, you can **download the script** and import it into any other Python scripts you wish to use using:
+As of now, the project is not available as a standalone library.\
+To use this product currently, you can **download the script** and import it into any other Python scripts you wish to use using:
 ```sh
-from fbscraper import Scraper, StatStrings
+from fbscraper import LeagueScraper, GeneralScraper, StatStrings
 ```
 Once the script has been imported, you are ready to start using it.
-Create an object of the ```Scraper``` class, and choose a league for the ```league``` argument.
-The available leagues are available on a multi-line comment in the first few lines of the ```Scraper``` class. Check the script out [here](fbscraper.py).
+Create an object of the ```LeagueScraper``` class, and choose a league for the ```league``` argument.
+The available leagues are available on a multi-line comment in the first few lines of the ```LeagueScraper``` class. Check the script out [here](fbscraper.py).
 Here is an example using the English Premier League:
 ```sh
-scraper = Scraper("england")
+scraper = LeagueScraper("england")
 ```
-You can now use league-specific methods and they will return Premier League data. As of now, non-league-specific methods must also be called from this object.
+You can now use league-specific methods and they will return Premier League data.\
+Non-league-specific methods are part of the ```GeneralScraper``` class. To use them, simply call them using ```GeneralScraper.method()```
 
 ### Methods
 
@@ -23,7 +25,7 @@ Below is the documentation for every method currently found in the script.
 ---
 <details>
 <summary>
-    <h4><code>Scraper.getLeagueLeaders(self, stat_id)</code></h4>
+    <h4><code>LeagueScraper.getLeagueLeaders(self, stat_id)</code></h4>
 </summary>
 
 ***Returns a list containing league leader(s) in the category specified by*** **```stat_id```, as well as the value of the statistic.**\
@@ -56,8 +58,8 @@ The available variables for ```stat_id``` can be seen in the ```StatString``` cl
 
 **Example**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("england")
+from fbscraper import LeagueScraper, StatStrings
+scraper = LeagueScraper("england")
 print(scraper.getLeagueLeaders(StatStrings.own_goals))
 ```
 **Output**
@@ -70,16 +72,16 @@ print(scraper.getLeagueLeaders(StatStrings.own_goals))
 
 <details>
 <summary>
-    <h4><code>Scraper.getTeams(self)</code></h4>
+    <h4><code>LeagueScraper.getTeams(self)</code></h4>
 </summary>
 
 ***Returns a list containing strings of all the names of the teams in the league, in alphabetical order.***\
-A straightforward method. Returns a list containing every team present in the league represented by the ```league``` argument of  ```Scraper```.
+A straightforward method. Returns a list containing every team present in the league represented by the ```league``` argument of  ```LeagueScraper```.
 
 **Example**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("france")
+from fbscraper import LeagueScraper
+scraper = LeagueScraper("france")
 print(scraper.getTeams())
 ```
 **Output**
@@ -92,16 +94,16 @@ print(scraper.getTeams())
 
 <details>
 <summary>
-    <h4><code>Scraper.getLeagueTable(self)</code></h4>
+    <h4><code>LeagueScraper.getLeagueTable(self)</code></h4>
 </summary>
 
 ***Returns a pandas dataframe of the league table.***\
-Reads the current league table of the league represented by the ```league``` argument of ```Scraper```.
+Reads the current league table of the league represented by the ```league``` argument of ```LeagueScraper```.
 
 **Example**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("germany")
+from fbscraper import LeagueScraper
+scraper = LeagueScraper("germany")
 print(scraper.getLeagueTable().to_string())
 ```
 
@@ -133,16 +135,16 @@ print(scraper.getLeagueTable().to_string())
 
 <details>
 <summary>
-    <h4><code>Scraper.getSquadStats(self)</code></h4>
+    <h4><code>LeagueScraper.getSquadStats(self)</code></h4>
 </summary>
 
-***Returns a pandas dataframe of the squad stats.***\
-Straightforward. Returns the squad stats table of the league specified in the ```league``` argument of the ```Scraper``` object in the form of a pandas dataframe.
+***Returns a pandas dataframe of the league's squad stats.***\
+Straightforward. Returns the squad stats table of the league specified in the ```league``` argument of the ```LeagueScraper``` object in the form of a pandas dataframe.
 
 **Example**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("italy")
+from fbscraper import LeagueScraper
+scraper = LeagueScraper("italy")
 print(scraper.getSquadStats().to_string())
 ```
 
@@ -178,21 +180,17 @@ print(scraper.getSquadStats().to_string())
 
 <details>
 <summary>
-    <h4><code>Scraper.getPlayerLink(self, inputted_player_name)</code></h4>
+    <h4><code>GeneralScraper.getPlayerLink(self, inputted_player_name)</code></h4>
 </summary>
 
 ***Returns a list with the stats page for the player inputted. If more than one player has that name, it will return all their links in a list.***\
-This method searches the string provided in the ```inputted_player_name``` argument on the FBRef database, and returns a list with the URLs found after the search.
+This **static** method searches the string provided in the ```inputted_player_name``` argument on the FBRef database, and returns a list with the URLs found after the search.
 
 **Example 1**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("england")
-# Will try removing the need for creating an object
-# tied to a class in the future if all that is being called is
-# a league-independant function such as Scraper.getPlayerLink()
+from fbscraper import GeneralScraper
 
-print(scraper.getPlayerLink("Riyad Mahrez"))
+print(GeneralScraper.getPlayerLink("Riyad Mahrez"))
 ```
 
 **Output 1**
@@ -202,10 +200,9 @@ print(scraper.getPlayerLink("Riyad Mahrez"))
 
 **Example 2**
 ```sh
-from fbscraper import Scraper, StatStrings
-scraper = Scraper("england")
+from fbscraper import GeneralScraper
 
-print(scraper.getPlayerLink("Ndombele"))
+print(GeneralScraper.getPlayerLink("Ndombele"))
 ```
 
 ---
