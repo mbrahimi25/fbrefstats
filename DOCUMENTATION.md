@@ -3,11 +3,17 @@
 ### Setup
 
 **As mentioned in the [README](README.md) file:**
-As of now, the project is not available as a standalone library.\
-To use this product currently, you can **download the script** and import it into any other Python scripts you wish to use using:
+To install this project, input the following into the command line:
+```sh
+pip install fbrefstats
+```
+From there, you can import the package into your program using:
+
 ```sh
 from fbrefstats import LeagueScraper, GeneralScraper, StatStrings
 ```
+
+
 Once the script has been imported, you are ready to start using it.
 Create an object of the ```LeagueScraper``` class, and choose a league for the ```league``` argument. \
 The available leagues are available on a multi-line comment in the first few lines of the ```LeagueScraper``` class. \

@@ -10,7 +10,12 @@ This is a small side project I work on in my free time. As an avid soccer fan an
 
 
 ### Installation
-As of now, the project is not available as a standalone library. To use this product currently, you can **download the script** and import it into any other Python scripts you wish to use using:
+To install this project, input the following into the command line:
+```sh
+pip install fbrefstats
+```
+From there, you can import the package into your program using:
+
 ```sh
 from fbrefstats import LeagueScraper, GeneralScraper, StatStrings
 ```
@@ -46,9 +51,8 @@ Split the ```Scraper``` class into two classes: ```LeagueScraper``` and ```Gener
 - **Randomized ```requests``` headers to avoid detectability when scraping** ☑
 - **Different table formats** ☑\
 I've learnt that pandas dataframes already have built-in functions for this: ```pandas.DataFrame.to_csv()``` and ```pandas.DataFrame.to_string()```
+- **Upload FBRefStats to PyPI** ☑\
 
-- **Turn *FBScraper* into a library** ☐\
-I have never made an actual library before, so I would like to research how to turn this into a real installable Python library.
 
 - **More scraping!** ☐\
 There is so much data available on [FBRef], so I would love to add more methods so that this data can be accessed through the script
