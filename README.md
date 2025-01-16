@@ -1,8 +1,12 @@
 # FBRef Stats
 ### A python script to scrape football data from [FBRef]
-#### Check out the [documentation](https://github.com/mbrahimi25/fbrefstats/blob/main/DOCUMENTATION.md)
-
 ![Static Badge](https://img.shields.io/badge/License-GNU-red) ![Static Badge](https://img.shields.io/badge/Python-yellow)
+
+### Check out the documentation:
+- [On GitHub](https://github.com/mbrahimi25/fbrefstats/blob/main/DOCUMENTATION.md)
+- [Locally](DOCUMENTATION.md)
+
+
 
 ### About
 FBRef Stats is a Python script which uses *BeautifulSoup* and *requests* to scrape data from [FBRef].
@@ -46,13 +50,10 @@ As of right now, this script is still in a very early development phase, and I a
 - **Update ```README.md``` (Urgent)** ☑
 - **Add a documentation file** ☑
 - **Update [the documentation file](DOCUMENTATION.md)** ☑
-- **Static functions** ☑\
-Split the ```Scraper``` class into two classes: ```LeagueScraper``` and ```GeneralScraper```, which contains **static methods**
+- **Static functions** ☑
 - **Randomized ```requests``` headers to avoid detectability when scraping** ☑
-- **Different table formats** ☑\
-I've learnt that pandas dataframes already have built-in functions for this: ```pandas.DataFrame.to_csv()``` and ```pandas.DataFrame.to_string()```
-- **Upload FBRefStats to PyPI** ☑\
-
+- **Different table formats (string or csv instead of pandas)** ☑ (ALREADY EXISTS)
+- **Upload FBRefStats to PyPI** ☑
 
 - **More scraping!** ☐\
 There is so much data available on [FBRef], so I would love to add more methods so that this data can be accessed through the script
@@ -60,8 +61,8 @@ There is so much data available on [FBRef], so I would love to add more methods 
 - **Add support for different league formats** ☐\
 As of right now, there are very few leagues supported as I am yet to add functionality to leagues with different formats (promotion/relegation playoffs, MLS post-season, or Apertura/Clausura formats commonly found in Latin America)
 
-- **Add nationality argument to ```GeneralScraper.getPlayerLink()```** ☐\
-Currently, ```GeneralScraper.getPlayerLink()``` takes one argument: ```inputted_player_name```. The method returns a list of URLs depending on which players were found when searching with ```inputted_player_name```. This can get annoying when there are many players with similar names, so adding a *nationality* argument would be useful for searching.
+- **Narrow down ```GeneralScraper.getPlayerLink()```** ☐\
+Currently, ```GeneralScraper.getPlayerLink()``` takes one argument: ```inputted_player_name```. The method returns a list of URLs depending on which players were found when searching with ```inputted_player_name```. This can get annoying when there are many players with similar names, so adding a *nationality* argument, or any other similar optional arguments, would be useful for searching.
 
 ### License
 GNU GPL

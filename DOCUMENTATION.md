@@ -16,7 +16,7 @@ from fbrefstats import LeagueScraper, GeneralScraper, StatStrings
 
 Once the script has been imported, you are ready to start using it.
 Create an object of the ```LeagueScraper``` class, and choose a league for the ```league``` argument. \
-The available leagues are available on a multi-line comment in the first few lines of the ```LeagueScraper``` class. \
+The available leagues are available on a multi-line comment in the first few lines of the ```LeagueScraper``` class, and in the ```league_links``` dictionnary near the beginning of the script. \
 Currently, they are:
 | Country | League name | LeagueScraper Object Argument |
 |----------|---------------|----------------------|
@@ -311,7 +311,7 @@ messi_url = GeneralScraper.getPlayerLink("Lionel Messi")[0]
 print(GeneralScraper.getPlayerFootedness(messi_url))
 ```
 
-**Output 1**
+**Output 2**
 ```sh
 Left
 ```
@@ -335,5 +335,140 @@ N/A
 ```
 
 </details>
+
+---
+
+<details>
+<summary>
+    <h4><code>GeneralScraper.getPlayerClub(player_link)</code></h4>
+</summary>
+
+***Returns a string containing the club of the player associated with the URL of player_link***\
+This **static** method returns a string containing the club of a player whose FBRef URL contains the corresponding data.
+If the data is not found (because they are retired or a free agent), the method will return a string containing the value ```N/A```
+
+**Example 1**
+```sh
+from fbrefstats import GeneralScraper
+
+cherki_url = GeneralScraper.getPlayerLink("Rayan Cherki")[0]
+# Must specify [0] because GeneralScraper.getPlayerLink() returns a list,
+# even if there is only one URL associated with the player name
+
+print(GeneralScraper.getPlayerClub(cherki_url))
+```
+
+**Output 1**
+```sh
+Lyon
+```
+
+**Example 2 - Free Agent**
+```sh
+from fbrefstats import GeneralScraper
+benyedder_url = GeneralScraper.getPlayerLink("Wissam Ben Yedder")[0]
+# As of January 2025, when this code was written, Wissam Ben Yedder is a free agent
+print(GeneralScraper.getPlayerClub(benyedder_url))
+```
+
+**Output 2**
+```sh
+N/A
+```
+
+</details>
+
+---
+
+<details>
+<summary>
+    <h4><code>GeneralScraper.getPlayerNationalTeam(player_link)</code></h4>
+</summary>
+
+***Returns a list containing the country, or countries, which the player represents or for which they have citizenship***\
+This **static** method returns a list. It contains all the countries for which the player represents or has represented before. If they have not represented a country before, the list will display the country for which the player has citizenship.
+
+**Example 1 - National Teams**
+```sh
+from fbrefstats import GeneralScraper
+
+olise_url = GeneralScraper.getPlayerLink("Michael Olise")[0]
+# Must specify [0] because GeneralScraper.getPlayerLink() returns a list,
+# even if there is only one URL associated with the player name
+
+olise_country = GeneralScraper.getPlayerNationalTeam(olise_url)
+
+print(olise_country)
+```
+
+**Output 1**
+```sh
+['France', 'England']
+```
+
+**Example 2 - Citizenship**
+```sh
+from fbrefstats import GeneralScraper
+
+gavran_url = GeneralScraper.getPlayerLink("Luka Gavran")[0]
+# Luka Gavran is a 24 year old Canadian goalkeeper.
+# For the 2024 MLS season he served primarily as Toronto FC's backup GK
+
+gavran_country = GeneralScraper.getPlayerNationalTeam(gavran_url)
+# index for same reason as above
+
+print(gavran_country)
+```
+
+**Output 2**
+```sh
+['Canada']
+```
+
+</details>
+
+---
+
+<details>
+<summary>
+    <h4><code>GeneralScraper.getPlayerAwards(player_link)</code></h4>
+</summary>
+
+***Returns a list containing the awards, distinctions, or honours, both individual and team-based, which the player has earned***\
+This **static** method returns a list. It contains the awards, honours, or distinctions the player has earned, either through individual skill or as part of a team.
+
+**Example 1**
+```sh
+from fbrefstats import GeneralScraper
+
+mbappe_url = GeneralScraper.getPlayerLink("Kylian Mbappe")[0]
+# Must specify [0] because GeneralScraper.getPlayerLink() returns a list,
+# even if there is only one URL associated with the player name
+
+mbappe_awards = GeneralScraper.getPlayerNationalTeam(mbappe_url)
+
+print(mbappe_awards)
+```
+
+**Output 1**
+```sh
+['5x Ligue 1 Male Player of the Year', '7x Ligue 1 Champion', '2x Coupe de la Ligue Champion', '2018 World Cup Champion', '4x FIFA FIFPro World XI', '2018 UEFA Team of the Year', '3x French Player of the Year', '2022 FIFA World Cup Silver Ball']
+```
+
+**Example 2**
+```sh
+from fbrefstats import GeneralScraper
+
+richarlison_url = GeneralScraper.getPlayerLink("Richarlison")[0]
+
+richarlison_awards = GeneralScraper.getPlayerNationalTeam(richarlison_url)
+
+print(richarlison_awards)
+```
+
+**Output 2**
+```sh
+N/A
+```
 
 </details>

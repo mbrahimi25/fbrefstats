@@ -9,14 +9,17 @@ session = requests.session()
 fake_header = FakeHttpHeader()
 # Object to create fake randomized headers for web scraping
 
-england_url = "https://fbref.com/en/comps/9/Premier-League-Stats"
-spain_url = "https://fbref.com/en/comps/12/La-Liga-Stats"
-germany_url = "https://fbref.com/en/comps/20/Bundesliga-Stats"
-italy_url = "https://fbref.com/en/comps/11/Serie-A-Stats"
-france_url = "https://fbref.com/en/comps/13/Ligue-1-Stats"
-netherlands_url = "https://fbref.com/en/comps/23/Eredivisie-Stats"
-portugal_url = "https://fbref.com/en/comps/32/Primeira-Liga-Stats"
-hungary_url = "https://fbref.com/en/comps/46/NB-I-Stats"
+league_links = {
+  "england": "https://fbref.com/en/comps/9/Premier-League-Stats",
+  "spain": "https://fbref.com/en/comps/12/La-Liga-Stats",
+  "germany": "https://fbref.com/en/comps/20/Bundesliga-Stats",
+  "italy": "https://fbref.com/en/comps/11/Serie-A-Stats",
+  "france": "https://fbref.com/en/comps/13/Ligue-1-Stats",
+  "netherlands": "https://fbref.com/en/comps/23/Eredivisie-Stats",
+  "portugal": "https://fbref.com/en/comps/32/Primeira-Liga-Stats",
+  "hungary": "https://fbref.com/en/comps/46/NB-I-Stats",
+  "russia": "https://fbref.com/en/comps/30/Russian-Premier-League-Stats",
+} # Dictionnary with links for the supported leagues
 
 # FBRef URLs for different leagues 
 
@@ -123,37 +126,20 @@ class LeagueScraper:
 
   def __init__(self, league):
     self.league = league
-    match league:
-      case "england":
-        self.url = england_url
-      case "france":
-        self.url = france_url
-      case "germany":
-        self.url = germany_url
-      case "italy":
-        self.url = italy_url
-      case "spain":
-        self.url = spain_url
-      case "netherlands":
-        self.url = netherlands_url
-      case "portugal":
-        self.url = portugal_url
-      case "hungary":
-        self.url = hungary_url
-      case "russia":
-        self.url = russia_url
-      case other:
-        raise ValueError(f"Invalid league: {league}")
-    # switch/case statement assigning the different league urls to the self.url variable in order to be read by BeautifulSoup
+
+    try:
+      self.url = league_links[league]
+    except:
+      raise ValueError(f"Invalid league: {league}")
 
     response = session.get(self.url, headers=fake_header.as_header_dict())
     # gets the raw HTML from self.url
 
     splitter = '<!-- 	<div class="data_grid" id="div_leaders" data-entry-type="Leaderboards">'
     # splits the raw HTML after a specific comment so that the code can read a commented-out section which includes league leaders in different stats
-    #print(splitter in response.text)
+    #print(splitter in response.text) # Prints the split HTML, used for testing when the splitting isn't working
     leader_tables_html = response.text.split(splitter)[1]
-    # this variable stores the second part of the splitted text so BeautifulSoup doesn't see that it's a comment
+    # this variable stores the SECOND PART (hence the [1]) of the split text so BeautifulSoup doesn't see that it's a comment
 
     # two BeautifulSoup objects. self.soup for the main tables, and self.leaders_soup for the league leaders in different stats
     self.soup = BeautifulSoup(response.text, "html.parser")
@@ -197,9 +183,9 @@ class LeagueScraper:
     """
     Returns a list containing strings of all the names of the teams in the league, in alphabetical order
     """
-    table = self.soup.findAll('table')[2]
-    league_rows = table.find('tbody').findAll('tr')
-    teams = [team.find('th', {'data-stat':'team'}).find('a').text for team in league_rows]
+    table = self.soup.findAll('table')[2] # 3rd table on the website
+    league_rows = table.find('tbody').findAll('tr') # Finds all rows
+    teams = [team.find('th', {'data-stat':'team'}).find('a').text for team in league_rows] # Adds the teams to the teams list
 
     return teams
 
@@ -208,8 +194,8 @@ class LeagueScraper:
     Returns a pandas dataframe of the league table
     """
 
-    league_table = self.soup.findAll('table')[0]
-    table = pd.read_html(StringIO(str(league_table)))[0]
+    league_table = self.soup.findAll('table')[0] # Gets the league table HTML
+    table = pd.read_html(StringIO(str(league_table)))[0] # Reads the HTML table as a pandas dataframe
     return table
 
   def getSquadStats(self):
@@ -217,8 +203,8 @@ class LeagueScraper:
     Returns a pandas dataframe of the squad stats
     """
 
-    squad_stats = self.soup.findAll('table')[2]
-    table = pd.read_html(StringIO(str(squad_stats)))[0]
+    squad_stats = self.soup.findAll('table')[2] # Gets the squad stats HTML
+    table = pd.read_html(StringIO(str(squad_stats)))[0] # Reads the HTML table as a pandas dataframe
     return table
 
 
@@ -300,7 +286,7 @@ class GeneralScraper:
     # Scrapes the player_link URL
 
     try:
-      position_text = player_soup.find(text='Footed:').parent.parent
+      footedness_text = player_soup.find(text='Footed:').parent.parent
       # Finds the "position" text on the page, and
       # gets its parent (the <strong> tag) and the parent of that (the <p> tag)
 
@@ -308,8 +294,74 @@ class GeneralScraper:
       return "N/A"
       # Error if the position text cannot be found
 
-    position_text = position_text.text.split("\xa0▪\xa0 ")[1]
+    footedness_text = footedness_text.text.split("\xa0▪\xa0 ")[1]
     # Splits the text into a list, and gets the second item in the list (the footedness)
-    position_text = position_text.split("Footed: ")[1]
+    footedness_text = footedness_text.split("Footed: ")[1]
     # Removes the "Footed: " text
-    return position_text
+    return footedness_text
+  
+  @staticmethod
+  def getPlayerClub(player_link):
+    player_html = session.get(player_link, headers=fake_header.as_header_dict())
+    player_soup = BeautifulSoup(player_html.text, "html.parser")
+    # Scrapes the player_link URL
+
+    try:
+      club_text = player_soup.find(text='Club:').parent.parent.find('a').text
+      # Finds the "Club:" text on the page, and
+      # gets its parent (the <strong> tag) and the parent of that (the <p> tag)
+      # then gets its child which is a link (the club) and gets its text
+
+    except:
+      return "N/A"
+      # Error if the club text cannot be found  
+
+    return club_text
+
+  @staticmethod
+  def getPlayerNationalTeam(player_link):
+    player_html = session.get(player_link)
+    player_soup = BeautifulSoup(player_html.text, "html.parser")
+    # Scrapes the player_link URL
+
+    try: # If the player has listed NATIONAL TEAM(S)
+      player_stat_paragraph = player_soup.find(string='National Team:').parent.parent
+      # Finds the "National Team:" text on the page, and
+      # gets its parent (the <strong> tag) and the parent of that (the <p> tag)
+      nation_links = player_stat_paragraph.findAll('a')
+      for i in range(len(nation_links)): nation_links[i] = nation_links[i].text
+      # Finds all the links under this paragraph, which is/are the national team(s) the player represents
+      # It then loops through the list and gets only the text from the <a> tags
+
+      return nation_links
+      # Returns the list containing the NATIONAL TEAMS of the player
+    
+    except: # If the player has listed CITIZENSHIP(S) instead of NATIONAL TEAM(S)
+      player_stat_paragraph = player_soup.find(string='Citizenship:').parent.parent
+      # Finds the "Citizenship:" text on the page, and
+      # gets its parent (the <strong> tag) and the parent of that (the <p> tag)
+      citizenship_links = player_stat_paragraph.findAll('a')
+      for i in range(len(citizenship_links)): citizenship_links[i] = citizenship_links[i].text
+      # Finds all the links under this paragraph, which is/are the national team(s) the player represents
+      # It then loops through the list and gets only the text from the <a> tags
+
+      return citizenship_links
+      # Returns the list containing the CITIZENSHIP of the player
+
+  @staticmethod
+  def getPlayerAwards(player_link):
+    player_html = session.get(player_link)
+    player_soup = BeautifulSoup(player_html.text, "html.parser")
+    # Scrapes the player_link URL
+
+    try:
+      awards_text = player_soup.find("ul", id="bling").findAll("li")
+      # Finds the <ul> with ID "bling" and gets all the <li> tags within it
+      for i in range(len(awards_text)): awards_text[i] = awards_text[i].find('a').text
+      # Loops through the <li> tags and finds the text within the children of the <li> tags, which are <a> tags
+
+    except:
+      return "N/A"
+      # Error if the awards cannot be found
+
+    return awards_text
