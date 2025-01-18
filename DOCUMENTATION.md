@@ -29,6 +29,7 @@ Currently, they are:
 | Portugal | Primeira Liga | "portugal" |
 | Hungary | Nemzeti Bajnokság I | "hungary" |
 | Russia | Russian Premier League | "russia" |
+| Turkey | Süper Lig | "turkey "
 
 
 Check the script out [here](fbrefstats.py).
@@ -172,8 +173,7 @@ print(scraper.getSquadStats().to_string())
 
 **Output**
 ```sh
-
-```   Unnamed: 0_level_0 Unnamed: 1_level_0 Unnamed: 2_level_0 Unnamed: 3_level_0 Playing Time                    Performance                                 Expected                      Progression      Per 90 Minutes                                                           
+Unnamed: 0_level_0 Unnamed: 1_level_0 Unnamed: 2_level_0 Unnamed: 3_level_0 Playing Time                    Performance                                 Expected                      Progression      Per 90 Minutes                                                           
                 Squad               # Pl                Age               Poss           MP Starts   Min   90s         Gls Ast G+A G-PK PK PKatt CrdY CrdR       xG  npxG   xAG npxG+xAG        PrgC PrgP            Gls   Ast   G+A  G-PK G+A-PK    xG   xAG xG+xAG  npxG npxG+xAG
 0            Atalanta                 28               27.3               56.4           18    187  1620  18.0          42  30  72   39  3     4   32    0     33.5  30.4  24.4     54.8         410  892           2.33  1.67  4.00  2.17   3.83  1.86  1.35   3.22  1.69     3.04
 1             Bologna                 27               26.8               57.1           17    187  1530  17.0          25  17  42   22  3     4   29    3     22.0  18.9  13.8     32.7         283  687           1.47  1.00  2.47  1.29   2.29  1.30  0.81   2.11  1.11     1.92
@@ -367,7 +367,7 @@ Lyon
 ```sh
 from fbrefstats import GeneralScraper
 benyedder_url = GeneralScraper.getPlayerLink("Wissam Ben Yedder")[0]
-# As of January 2025, when this code was written, Wissam Ben Yedder is a free agent
+# As of January 2025, Wissam Ben Yedder is a free agent
 print(GeneralScraper.getPlayerClub(benyedder_url))
 ```
 
@@ -436,8 +436,9 @@ print(gavran_country)
 
 ***Returns a list containing the awards, distinctions, or honours, both individual and team-based, which the player has earned***\
 This **static** method returns a list. It contains the awards, honours, or distinctions the player has earned, either through individual skill or as part of a team.
+If no awards are found, the method returns the string ```N/A```
 
-**Example 1**
+**Example 1 - Awards**
 ```sh
 from fbrefstats import GeneralScraper
 
@@ -455,7 +456,7 @@ print(mbappe_awards)
 ['5x Ligue 1 Male Player of the Year', '7x Ligue 1 Champion', '2x Coupe de la Ligue Champion', '2018 World Cup Champion', '4x FIFA FIFPro World XI', '2018 UEFA Team of the Year', '3x French Player of the Year', '2022 FIFA World Cup Silver Ball']
 ```
 
-**Example 2**
+**Example 2 - No Awards**
 ```sh
 from fbrefstats import GeneralScraper
 
@@ -472,3 +473,201 @@ N/A
 ```
 
 </details>
+
+---
+
+<details>
+<summary>
+    <h4><code>GeneralScraper.getSimilarPlayers(player_link)</code></h4>
+</summary>
+
+***Returns a dictionnary with table(s) of the 'similar players' table for different positions***\
+This **static** method returns a dictionary with similar players depending on the positions the player plays, and similar players who share those positions.
+
+The dictionary format is as follows:
+
+```sh
+output_dict = {
+    "GK": pandas.DataFrame,
+    "CB": pandas.DataFrame,
+    "FB": pandas.DataFrame,
+    "MF": pandas.DataFrame,
+    "AM": pandas.DataFrame,
+    "FW": pandas.DataFrame,
+}
+```
+
+If there is no table associated with a position, that entry is **not included in the output dictionary**.
+
+If no table containing the data is found, or if an error occurs, the method returns the string ```N/A```
+
+**Example**
+
+As of January 2025, Noussair Mazraoui is a Manchester United centre-back/fullback
+
+<img text-align="center" display:inline-block margin-left:auto margin-right:auto width=400 src="images/MazraouiSimilarPlayersCB.png"/>
+<img text-align="center" display:inline-block margin-left:auto margin-right:auto width=400 src="images/MazraouiSimilarPlayersFB.png"/>
+
+The ```GeneralScraper.getSimilarPlayers()``` method gets both of these tables and returns them as pandas dataframes within the dictionary. For players with only 1 table (because they only primarily play one position), then the dictionary will only have one entry.
+
+Below is the code to get Noussair Mazraoui's Similar Players Tables, for both CBs and FBs:
+
+
+```sh
+from fbrefstats import GeneralScraper
+
+mazraoui_url = GeneralScraper.getPlayerLink("Noussair Mazraoui")[0]
+# Must specify [0] because GeneralScraper.getPlayerLink() returns a list,
+# even if there is only one URL associated with the player name
+
+similarPlayersToMazraoui = GeneralScraper.getSimilarPlayers(mazraoui_url)
+
+print(similarPlayersToMazraoui)
+```
+
+**Output**
+```sh
+{
+'CB':    
+Rk              Player  Nation           Squad  Compare
+0   1      Facundo Medina  ar ARG            Lens  Compare
+1   2     Benjamin Pavard  fr FRA  Internazionale  Compare
+2   3         Daley Blind  nl NED          Girona  Compare
+3   4  Alessandro Bastoni  it ITA  Internazionale  Compare
+4   5      Sead Kolašinac  ba BIH        Atalanta  Compare
+5   6        Clinton Mata  ao ANG            Lyon  Compare
+6   7      Edmond Tapsoba  bf BFA      Leverkusen  Compare
+7   8    Odilon Kossounou  ci CIV        Atalanta  Compare
+8   9  Florian Grillitsch  at AUT      Hoffenheim  Compare
+9  10              Danilo  br BRA        Juventus  Compare,
+
+'FB':    
+Rk            Player  Nation          Squad  Compare
+0   1           Emerson  br BRA          Milan  Compare
+1   2           Ismaily  br BRA          Lille  Compare
+2   3        Guela Doué  ci CIV     Strasbourg  Compare
+3   4     Hamari Traoré  ml MLI  Real Sociedad  Compare
+4   5      Jon Aramburu  ve VEN  Real Sociedad  Compare
+5   6           Carmona  es ESP        Sevilla  Compare
+6   7  Juan David Cabal  co COL       Juventus  Compare
+7   8      Aurélio Buta  pt POR          Reims  Compare
+8   9      Kiko Femenía  es ESP     Villarreal  Compare
+9  10     Bradley Locko  fr FRA          Brest  Compare
+}
+```
+
+The output is formatted with newlines to make it easier to see.
+
+</details>
+
+---
+
+<details>
+<summary>
+    <h4><code>GeneralScraper.getScoutingReport(player_link)</code></h4>
+</summary>
+
+***Returns a dictionnary with table(s) of the 'scouting report' table for different positions***\
+This **static** method returns a dictionary with the scouting report depending on the positions the player plays.
+
+The dictionary format is as follows:
+
+```sh
+output_dict = {
+    "GK": pandas.DataFrame,
+    "CB": pandas.DataFrame,
+    "FB": pandas.DataFrame,
+    "MF": pandas.DataFrame,
+    "AM": pandas.DataFrame,
+    "FW": pandas.DataFrame,
+}
+```
+
+If there is no table associated with a position, that entry is **not included in the output dictionary**.
+
+If no table containing the data is found, or if an error occurs, the method returns the string ```N/A```
+
+**Example**
+
+As of January 2025, Joshua Kimmich is a Bayern Munich fullback/midfielder
+
+<img text-align="center" display:inline-block margin-left:auto margin-right:auto width=400 src="images/KimmichScoutingReportFB.png"/>
+<img text-align="center" display:inline-block margin-left:auto margin-right:auto width=400 src="images/KimmichScoutingReportMF.png"/>
+
+The ```GeneralScraper.getScoutingReport()``` method gets both of these tables and returns them as pandas dataframes within the dictionary. For players with only 1 table (because they only primarily play one position), then the dictionary will only have one entry.
+
+Below is the code to get Joshua Kimmich's Scouting Report Tables, for both FBs and MFs:
+
+
+```sh
+from fbrefstats import GeneralScraper
+
+kimmich_url = GeneralScraper.getPlayerLink("Joshua Kimmich")[0]
+# Must specify [0] because GeneralScraper.getPlayerLink() returns a list,
+# even if there is only one URL associated with the player name
+
+kimmichScoutingReport = GeneralScraper.getScoutingReport(kimmich_url)
+
+print(kimmichScoutingReport)
+```
+
+**Output**
+```sh
+{
+'FB':
+                    Statistic  Per 90  Percentile
+0          Non-Penalty Goals    0.05        55.0
+1       npxG: Non-Penalty xG    0.06        66.0
+2                Shots Total    0.94        74.0
+3                    Assists    0.21        90.0
+4   xAG: Exp. Assisted Goals    0.26        97.0
+5                 npxG + xAG    0.32        95.0
+6      Shot-Creating Actions    4.64        99.0
+7                        NaN     NaN         NaN
+8           Passes Attempted  101.32        99.0
+9          Pass Completion %   87.9%        95.0
+10        Progressive Passes    9.28        99.0
+11       Progressive Carries    2.41        68.0
+12       Successful Take-Ons    0.49        36.0
+13         Touches (Att Pen)    1.13        34.0
+14    Progressive Passes Rec    4.29        52.0
+15                       NaN     NaN         NaN
+16                   Tackles    1.69        33.0
+17             Interceptions    0.54        12.0
+18                    Blocks    0.87        24.0
+19                Clearances    1.15         5.0
+20               Aerials Won    0.19         3.0,
+
+'MF':
+                    Statistic  Per 90  Percentile
+0          Non-Penalty Goals    0.05        41.0
+1       npxG: Non-Penalty xG    0.06        41.0
+2                Shots Total    0.94        43.0
+3                    Assists    0.21        88.0
+4   xAG: Exp. Assisted Goals    0.26        98.0
+5                 npxG + xAG    0.32        89.0
+6      Shot-Creating Actions    4.64        96.0
+7                        NaN     NaN         NaN
+8           Passes Attempted  101.32        99.0
+9          Pass Completion %   87.9%        79.0
+10        Progressive Passes    9.28        98.0
+11       Progressive Carries    2.41        90.0
+12       Successful Take-Ons    0.49        38.0
+13         Touches (Att Pen)    1.13        51.0
+14    Progressive Passes Rec    4.29        90.0
+15                       NaN     NaN         NaN
+16                   Tackles    1.69        27.0
+17             Interceptions    0.54        12.0
+18                    Blocks    0.87        20.0
+19                Clearances    1.15        32.0
+20               Aerials Won    0.19         4.0
+} 
+```
+The "line breaks" on the table (as seen on the image) are outputted in the dictionary as "NaN" for all 3 cells. Make sure to take this into account.
+
+The output is formatted with newlines to make it easier to see.
+
+</details>
+
+---
+

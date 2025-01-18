@@ -1,6 +1,7 @@
 # FBRef Stats
 ### A python script to scrape football data from [FBRef]
-![Static Badge](https://img.shields.io/badge/License-GNU-red) ![Static Badge](https://img.shields.io/badge/Python-yellow)
+![Version](https://img.shields.io/pypi/v/fbrefstats?label=version) ![PyPI Downloads](https://img.shields.io/pypi/dm/fbrefstats) ![Python](https://img.shields.io/badge/python-3.6+-blue?logo=python&logoColor=yellow) ![License](https://img.shields.io/badge/license-GNU-red)
+
 
 ### Check out the documentation:
 - [On GitHub](https://github.com/mbrahimi25/fbrefstats/blob/main/DOCUMENTATION.md)
@@ -10,7 +11,7 @@
 
 ### About
 FBRef Stats is a Python script which uses *BeautifulSoup* and *requests* to scrape data from [FBRef].
-This is a small side project I work on in my free time. As an avid soccer fan and someone who finds sports stats interesting, I tried making a program which takes player stats into account so I could gain an advantage on my fantasy leagues with my friends. However, I could not find many good free libraries which provided soccer data, so I resolved to build one myself.
+This is a small side project I work on in my free time. As an avid soccer fan and someone who finds sports stats interesting, I tried making a program analysing the performance of different players. However, I could not find many good free libraries which provided soccer data, so I resolved to build one myself.
 
 
 ### Installation
@@ -36,13 +37,14 @@ As seen above, there are three classes within the ```fbrefstats``` script:
 
 **Check out the [documentation](DOCUMENTATION.md) for info on how to use the script.**
 
-### Other libraries used
+### Dependencies
 As of now, the libraries used within this project are:
 - ```BeautifulSoup4```
 - ```requests```
 - ```pandas```
-- ```StringIO```
 - ```fake-http-reader``` | Link to the repo [here](https://github.com/MichaelTatarski/fake-http-header)
+- ```lxml```
+- ```html5lib```
 
 ### To-do
 As of right now, this script is still in a very early development phase, and I am only working on it as a personal side project. I have a few things I am thinking of adding:

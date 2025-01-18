@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from io import StringIO
 from fake_http_header import FakeHttpHeader
+import lxml
+import html5lib
 
 session = requests.session()
 
@@ -19,7 +21,9 @@ league_links = {
   "portugal": "https://fbref.com/en/comps/32/Primeira-Liga-Stats",
   "hungary": "https://fbref.com/en/comps/46/NB-I-Stats",
   "russia": "https://fbref.com/en/comps/30/Russian-Premier-League-Stats",
-} # Dictionnary with links for the supported leagues
+  "turkey": "https://fbref.com/en/comps/26/Super-Lig-Stats",
+}
+# Dictionnary with links for the supported leagues
 
 # FBRef URLs for different leagues 
 
@@ -112,16 +116,7 @@ class StatStrings:
 class LeagueScraper:
   """
   A class for scraping data from different leagues on FBRef
-  Instantiate a Scraper by passing the country name of the league you wish to scrape into the 'league' argument. Available leagues include:
-  * 'england' (Premier League)
-  * 'france' (Ligue 1)
-  * 'germany' (Bundesliga)
-  * 'spain' (La Liga)
-  * 'italy' (Serie A)
-  * 'netherlands' (Eredivisie)
-  * 'portugal' (Primeira Liga)
-  * 'hungary' (Nemzeti Bajnokság I)
-  * 'russia' (Russian Premier League))
+  Instantiate a LeagueScraper by passing the country name of the league you wish to scrape into the 'league' argument.
   """
 
   def __init__(self, league):
@@ -144,7 +139,6 @@ class LeagueScraper:
     # two BeautifulSoup objects. self.soup for the main tables, and self.leaders_soup for the league leaders in different stats
     self.soup = BeautifulSoup(response.text, "html.parser")
     self.leaders_soup = BeautifulSoup(leader_tables_html, "html.parser")
-
 
   def getLeagueLeaders(self, stat_id):
     """
@@ -195,8 +189,8 @@ class LeagueScraper:
     """
 
     league_table = self.soup.findAll('table')[0] # Gets the league table HTML
-    table = pd.read_html(StringIO(str(league_table)))[0] # Reads the HTML table as a pandas dataframe
-    return table
+    pandas_table = pd.read_html(StringIO(str(league_table)))[0] # Reads the HTML table as a pandas dataframe
+    return pandas_table
 
   def getSquadStats(self):
     """
@@ -204,8 +198,8 @@ class LeagueScraper:
     """
 
     squad_stats = self.soup.findAll('table')[2] # Gets the squad stats HTML
-    table = pd.read_html(StringIO(str(squad_stats)))[0] # Reads the HTML table as a pandas dataframe
-    return table
+    pandas_table = pd.read_html(StringIO(str(squad_stats)))[0] # Reads the HTML table as a pandas dataframe
+    return pandas_table
 
 
 class GeneralScraper:
@@ -259,6 +253,8 @@ class GeneralScraper:
 
   @staticmethod
   def getPlayerPosition(player_link):
+    """Returns a string of the position(s) of the player whose URL is in the player_link argument"""
+
     player_html = session.get(player_link, headers=fake_header.as_header_dict())
     player_soup = BeautifulSoup(player_html.text, "html.parser")
     # Scrapes the player_link URL
@@ -281,6 +277,8 @@ class GeneralScraper:
 
   @staticmethod
   def getPlayerFootedness(player_link):
+    """Returns a string of the footedness of the player whose URL is in the player_link argument"""
+
     player_html = session.get(player_link, headers=fake_header.as_header_dict())
     player_soup = BeautifulSoup(player_html.text, "html.parser")
     # Scrapes the player_link URL
@@ -302,6 +300,8 @@ class GeneralScraper:
   
   @staticmethod
   def getPlayerClub(player_link):
+    """Returns a string the club of the player whose URL is in the player_link argument"""
+
     player_html = session.get(player_link, headers=fake_header.as_header_dict())
     player_soup = BeautifulSoup(player_html.text, "html.parser")
     # Scrapes the player_link URL
@@ -320,6 +320,8 @@ class GeneralScraper:
 
   @staticmethod
   def getPlayerNationalTeam(player_link):
+    """Returns a list containing the national team(s) or citizenship of the player whose URL is in the player_link argument"""
+
     player_html = session.get(player_link)
     player_soup = BeautifulSoup(player_html.text, "html.parser")
     # Scrapes the player_link URL
@@ -350,6 +352,8 @@ class GeneralScraper:
 
   @staticmethod
   def getPlayerAwards(player_link):
+    """Returns a list containing the award(s) of the player whose URL is in the player_link argument"""
+
     player_html = session.get(player_link)
     player_soup = BeautifulSoup(player_html.text, "html.parser")
     # Scrapes the player_link URL
@@ -365,3 +369,71 @@ class GeneralScraper:
       # Error if the awards cannot be found
 
     return awards_text
+
+  @staticmethod
+  def getSimilarPlayers(player_link):
+    """Returns a dictionary containing one or more pandas dataframes of similar players to player_link."""
+
+    # We can use the id similar_ then the position, so GK, CB, FB, MF, AM, FW
+
+    player_html = session.get(player_link)
+    player_soup = BeautifulSoup(player_html.text, "html.parser")
+    # Scrapes the player_link URL
+
+    try:
+      similar_tables = {
+        "GK": player_soup.find("table", id="similar_GK"), # Gets the goalkeeper table, and reads it as a pandas dataframe
+        "CB": player_soup.find("table", id="similar_CB"), # Gets the centreback table, and reads it as a pandas dataframe
+        "FB": player_soup.find("table", id="similar_FB"), # Gets the fullback table, and reads it as a pandas dataframe
+        "MF": player_soup.find("table", id="similar_MF"), # Gets the midfielder table, and reads it as a pandas dataframe
+        "AM": player_soup.find("table", id="similar_AM"), # Gets the att. midfielder table, and reads it as a pandas dataframe
+        "FW": player_soup.find("table", id="similar_FW"), # Gets the forward table, and reads it as a pandas dataframe
+      }
+      # Dictionary containing scraped tables of the Similar Players table for all the positions
+      # If the table exists on the website, it is stored in the value associated with its position key
+      # If no table is found, the value will be None
+
+      output_dict = {} # Initializes output dictionary
+      
+      for key in similar_tables: # Iterates through the dictionary
+        if similar_tables[key] != None: # If the dictionary entry is NOT equal to None
+          output_dict[key] = pd.read_html(StringIO(str(similar_tables[key])))[0] # Add the key and its value in a pandas dataframe to the ouput dict.
+      
+      return output_dict # Returns the dataframe
+      
+    except:
+      return "N/A" # Returns N/A if the dataframe is not found, or if an error occurs
+
+  @staticmethod
+  def getScoutingReport(player_link):
+    """Returns a dictionary containing one or more pandas dataframes of the scouting report of player_link."""
+
+    # We can use the id scout_summary_ then the position, so GK, CB, FB, MF, AM, FW
+
+    player_html = session.get(player_link)
+    player_soup = BeautifulSoup(player_html.text, "html.parser")
+    # Scrapes the player_link URL
+
+    try:
+      similar_tables = {
+        "GK": player_soup.find("table", id="scout_summary_GK"), # Gets the goalkeeper table, and reads it as a pandas dataframe
+        "CB": player_soup.find("table", id="scout_summary_CB"), # Gets the centreback table, and reads it as a pandas dataframe
+        "FB": player_soup.find("table", id="scout_summary_FB"), # Gets the fullback table, and reads it as a pandas dataframe
+        "MF": player_soup.find("table", id="scout_summary_MF"), # Gets the midfielder table, and reads it as a pandas dataframe
+        "AM": player_soup.find("table", id="scout_summary_AM"), # Gets the att. midfielder table, and reads it as a pandas dataframe
+        "FW": player_soup.find("table", id="scout_summary_FW"), # Gets the forward table, and reads it as a pandas dataframe
+      }
+      # Dictionary containing scraped tables of the Scout Summary table for all the positions
+      # If the table exists on the website, it is stored in the value associated with its position key
+      # If no table is found, the value will be None
+
+      output_dict = {} # Initializes output dictionary
+      
+      for key in similar_tables: # Iterates through the dictionary
+        if similar_tables[key] != None: # If the dictionary entry is NOT equal to None
+          output_dict[key] = pd.read_html(StringIO(str(similar_tables[key])))[0] # Add the key and its value in a pandas dataframe to the ouput dict.
+      
+      return output_dict # Returns the dictionary
+      
+    except:
+      return "N/A" # Returns N/A if the dataframe is not found, or if an error occurs

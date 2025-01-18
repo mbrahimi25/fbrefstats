@@ -1,12 +1,12 @@
 [project]
 name = "fbrefstats"
-version = "0.1.12"
+version = "0.1.13"
 authors = [
   { name="Mohamed Brahimi"},
 ]
 description = "A Python script to scrape football data from FBRef"
 readme = "README.md"
-requires-python = ">=3.5"
+requires-python = ">=3.6"
 license = { file = "LICENSE.txt" }
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 keywords = ["soccer", "football", "scraping", "webscraping", "FBRef"]
-dependencies = ["requests", "pandas", "bs4", "fake_http_header"]
+dependencies = ["requests", "pandas", "bs4", "fake_http_header", "lxml", "html5lib"]
 
 [project.urls]
 Homepage = "https://github.com/mbrahimi25/fbrefstats"
